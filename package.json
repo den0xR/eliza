@@ -4,6 +4,7 @@
         "preinstall": "npx only-allow pnpm",
         "build": "turbo run build --filter=!eliza-docs",
         "start": "pnpm --filter \"@ai16z/agent\" start --isRoot",
+        "start-custom": "pnpm --filter \"@ai16z/agent-custom\" start --isRoot",
         "start:client": "pnpm --dir client start --isRoot",
         "start:debug": "cross-env NODE_ENV=development VERBOSE=true DEBUG=eliza:* pnpm --filter \"@ai16z/agent\" start --isRoot",
         "dev": "bash ./scripts/dev.sh",

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.turbo/
+*.log
+content_cache/
+data/
+*.sqlite
+*.gguf
