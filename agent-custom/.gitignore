@@ -1,8 +1,8 @@
-node_modules/
-dist/
-.turbo/
-*.log
-content_cache/
-data/
-*.sqlite
-*.gguf
+*.ts
+!index.ts
+!character.ts
+.env
+*.env
+.env*
+/data
+/generatedImages
