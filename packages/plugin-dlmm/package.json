@@ -1,0 +1,33 @@
+{
+  "name": "@elizaos/plugin-dlmm",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepare": "pnpm build"
+  },
+  "dependencies": {
+    "@elizaos/core": "workspace:*",
+    "@meteora-ag/dlmm": "^1.3.10",
+    "@solana/web3.js": "npm:@solana/web3.js@1.95.5",
+    "@coral-xyz/anchor": "0.28.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "@types/node": "^20.8.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eliza-os/eliza.git",
+    "directory": "packages/plugin-dlmm"
+  },
+  "keywords": [
+    "eliza",
+    "plugin",
+    "dlmm",
+    "solana",
+    "liquidity"
+  ],
+  "author": "Eliza OS Team"
+}
