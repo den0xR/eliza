@@ -1,0 +1,30 @@
+{
+  "name": "@elizaos/plugin-memecoin",
+  "version": "0.1.8+build.1",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --format esm --dts",
+    "dev": "tsup --format esm --dts --watch",
+    "lint": "eslint . --fix"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.87.0",
+    "@elizaos/core": "workspace:*",
+    "bignumber.js": "^9.1.1"
+  }
+}

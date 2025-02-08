@@ -40,7 +40,7 @@ import { zgPlugin } from "@elizaos/plugin-0g";
 import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
 import createGoatPlugin from "@elizaos/plugin-goat";
 // import { intifacePlugin } from "@elizaos/plugin-intiface";
-import { DirectClient } from "@elizaos/client-direct";
+
 import { ThreeDGenerationPlugin } from "@elizaos/plugin-3d-generation";
 import { abstractPlugin } from "@elizaos/plugin-abstract";
 import { alloraPlugin } from "@elizaos/plugin-allora";
@@ -103,7 +103,10 @@ import net from "net";
 import path from "path";
 import { fileURLToPath } from "url";
 import yargs from "yargs";
-import {dominosPlugin} from "@elizaos/plugin-dominos";
+//import { dominosPlugin } from "@elizaos/plugin-dominos";
+
+import { memeCoinPlugin } from "@elizaos/plugin-memecoin"
+
 
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
 const __dirname = path.dirname(__filename); // get the name of the directory
@@ -175,24 +178,24 @@ async function loadCharacter(filePath: string): Promise<Character> {
     let character = JSON.parse(content);
     validateCharacterConfig(character);
 
-     // .id isn't really valid
-     const characterId = character.id || character.name;
-     const characterPrefix = `CHARACTER.${characterId.toUpperCase().replace(/ /g, "_")}.`;
-     const characterSettings = Object.entries(process.env)
-         .filter(([key]) => key.startsWith(characterPrefix))
-         .reduce((settings, [key, value]) => {
-             const settingKey = key.slice(characterPrefix.length);
-             return { ...settings, [settingKey]: value };
-         }, {});
-     if (Object.keys(characterSettings).length > 0) {
-         character.settings = character.settings || {};
-         character.settings.secrets = {
-             ...characterSettings,
-             ...character.settings.secrets,
-         };
-     }
-     // Handle plugins
-     character.plugins = await handlePluginImporting(
+    // .id isn't really valid
+    const characterId = character.id || character.name;
+    const characterPrefix = `CHARACTER.${characterId.toUpperCase().replace(/ /g, "_")}.`;
+    const characterSettings = Object.entries(process.env)
+        .filter(([key]) => key.startsWith(characterPrefix))
+        .reduce((settings, [key, value]) => {
+            const settingKey = key.slice(characterPrefix.length);
+            return { ...settings, [settingKey]: value };
+        }, {});
+    if (Object.keys(characterSettings).length > 0) {
+        character.settings = character.settings || {};
+        character.settings.secrets = {
+            ...characterSettings,
+            ...character.settings.secrets,
+        };
+    }
+    // Handle plugins
+    character.plugins = await handlePluginImporting(
         character.plugins
     );
     if (character.extends) {
@@ -690,7 +693,7 @@ export async function createAgent(
     if (
         process.env.PRIMUS_APP_ID &&
         process.env.PRIMUS_APP_SECRET &&
-        process.env.VERIFIABLE_INFERENCE_ENABLED === "true"){
+        process.env.VERIFIABLE_INFERENCE_ENABLED === "true") {
         verifiableInferenceAdapter = new PrimusAdapter({
             appId: process.env.PRIMUS_APP_ID,
             appSecret: process.env.PRIMUS_APP_SECRET,
@@ -710,14 +713,15 @@ export async function createAgent(
         // character.plugins are handled when clients are added
         plugins: [
             bootstrapPlugin,
+            memeCoinPlugin,
             getSecret(character, "CONFLUX_CORE_PRIVATE_KEY")
                 ? confluxPlugin
                 : null,
             nodePlugin,
             getSecret(character, "TAVILY_API_KEY") ? webSearchPlugin : null,
             getSecret(character, "SOLANA_PUBLIC_KEY") ||
-            (getSecret(character, "WALLET_PUBLIC_KEY") &&
-                !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
+                (getSecret(character, "WALLET_PUBLIC_KEY") &&
+                    !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
                 ? solanaPlugin
                 : null,
             getSecret(character, "SOLANA_PRIVATE_KEY")
@@ -726,25 +730,25 @@ export async function createAgent(
             getSecret(character, "AUTONOME_JWT_TOKEN") ? autonomePlugin : null,
             (getSecret(character, "NEAR_ADDRESS") ||
                 getSecret(character, "NEAR_WALLET_PUBLIC_KEY")) &&
-            getSecret(character, "NEAR_WALLET_SECRET_KEY")
+                getSecret(character, "NEAR_WALLET_SECRET_KEY")
                 ? nearPlugin
                 : null,
             getSecret(character, "EVM_PUBLIC_KEY") ||
-            (getSecret(character, "WALLET_PUBLIC_KEY") &&
-                getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
+                (getSecret(character, "WALLET_PUBLIC_KEY") &&
+                    getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith("0x"))
                 ? evmPlugin
                 : null,
             getSecret(character, "COSMOS_RECOVERY_PHRASE") &&
-                getSecret(character, "COSMOS_AVAILABLE_CHAINS") &&
-                createCosmosPlugin(),
+            getSecret(character, "COSMOS_AVAILABLE_CHAINS") &&
+            createCosmosPlugin(),
             (getSecret(character, "SOLANA_PUBLIC_KEY") ||
                 (getSecret(character, "WALLET_PUBLIC_KEY") &&
                     !getSecret(character, "WALLET_PUBLIC_KEY")?.startsWith(
                         "0x"
                     ))) &&
-            getSecret(character, "SOLANA_ADMIN_PUBLIC_KEY") &&
-            getSecret(character, "SOLANA_PRIVATE_KEY") &&
-            getSecret(character, "SOLANA_ADMIN_PRIVATE_KEY")
+                getSecret(character, "SOLANA_ADMIN_PUBLIC_KEY") &&
+                getSecret(character, "SOLANA_PRIVATE_KEY") &&
+                getSecret(character, "SOLANA_ADMIN_PRIVATE_KEY")
                 ? nftGenerationPlugin
                 : null,
             getSecret(character, "ZEROG_PRIVATE_KEY") ? zgPlugin : null,
@@ -755,38 +759,38 @@ export async function createAgent(
                 ? coinbaseCommercePlugin
                 : null,
             getSecret(character, "FAL_API_KEY") ||
-            getSecret(character, "OPENAI_API_KEY") ||
-            getSecret(character, "VENICE_API_KEY") ||
-            getSecret(character, "NINETEEN_AI_API_KEY") ||
-            getSecret(character, "HEURIST_API_KEY") ||
-            getSecret(character, "LIVEPEER_GATEWAY_URL")
+                getSecret(character, "OPENAI_API_KEY") ||
+                getSecret(character, "VENICE_API_KEY") ||
+                getSecret(character, "NINETEEN_AI_API_KEY") ||
+                getSecret(character, "HEURIST_API_KEY") ||
+                getSecret(character, "LIVEPEER_GATEWAY_URL")
                 ? imageGenerationPlugin
                 : null,
             getSecret(character, "FAL_API_KEY") ? ThreeDGenerationPlugin : null,
             ...(getSecret(character, "COINBASE_API_KEY") &&
-            getSecret(character, "COINBASE_PRIVATE_KEY")
+                getSecret(character, "COINBASE_PRIVATE_KEY")
                 ? [
-                      coinbaseMassPaymentsPlugin,
-                      tradePlugin,
-                      tokenContractPlugin,
-                      advancedTradePlugin,
-                  ]
+                    coinbaseMassPaymentsPlugin,
+                    tradePlugin,
+                    tokenContractPlugin,
+                    advancedTradePlugin,
+                ]
                 : []),
             ...(teeMode !== TEEMode.OFF && walletSecretSalt ? [teePlugin] : []),
             getSecret(character, "SGX") ? sgxPlugin : null,
             getSecret(character, "ENABLE_TEE_LOG") &&
-            ((teeMode !== TEEMode.OFF && walletSecretSalt) ||
-                getSecret(character, "SGX"))
+                ((teeMode !== TEEMode.OFF && walletSecretSalt) ||
+                    getSecret(character, "SGX"))
                 ? teeLogPlugin
                 : null,
             getSecret(character, "COINBASE_API_KEY") &&
-            getSecret(character, "COINBASE_PRIVATE_KEY") &&
-            getSecret(character, "COINBASE_NOTIFICATION_URI")
+                getSecret(character, "COINBASE_PRIVATE_KEY") &&
+                getSecret(character, "COINBASE_NOTIFICATION_URI")
                 ? webhookPlugin
                 : null,
             goatPlugin,
             getSecret(character, "COINGECKO_API_KEY") ||
-            getSecret(character, "COINGECKO_PRO_API_KEY")
+                getSecret(character, "COINGECKO_PRO_API_KEY")
                 ? coingeckoPlugin
                 : null,
             getSecret(character, "EVM_PROVIDER_URL") ? goatPlugin : null,
@@ -794,15 +798,15 @@ export async function createAgent(
                 ? abstractPlugin
                 : null,
             getSecret(character, "BINANCE_API_KEY") &&
-            getSecret(character, "BINANCE_SECRET_KEY")
+                getSecret(character, "BINANCE_SECRET_KEY")
                 ? binancePlugin
                 : null,
             getSecret(character, "FLOW_ADDRESS") &&
-            getSecret(character, "FLOW_PRIVATE_KEY")
+                getSecret(character, "FLOW_PRIVATE_KEY")
                 ? flowPlugin
                 : null,
             getSecret(character, "LENS_ADDRESS") &&
-            getSecret(character, "LENS_PRIVATE_KEY")
+                getSecret(character, "LENS_PRIVATE_KEY")
                 ? lensPlugin
                 : null,
             getSecret(character, "APTOS_PRIVATE_KEY") ? aptosPlugin : null,
@@ -821,7 +825,7 @@ export async function createAgent(
                 ? avalanchePlugin
                 : null,
             getSecret(character, "ECHOCHAMBERS_API_URL") &&
-            getSecret(character, "ECHOCHAMBERS_API_KEY")
+                getSecret(character, "ECHOCHAMBERS_API_KEY")
                 ? echoChambersPlugin
                 : null,
             getSecret(character, "LETZAI_API_KEY") ? letzAIPlugin : null,
@@ -831,7 +835,7 @@ export async function createAgent(
                 ? genLayerPlugin
                 : null,
             getSecret(character, "AVAIL_SEED") &&
-            getSecret(character, "AVAIL_APP_ID")
+                getSecret(character, "AVAIL_APP_ID")
                 ? availPlugin
                 : null,
             getSecret(character, "OPEN_WEATHER_API_KEY")
@@ -849,7 +853,7 @@ export async function createAgent(
                 ? hyperliquidPlugin
                 : null,
             getSecret(character, "AKASH_MNEMONIC") &&
-            getSecret(character, "AKASH_WALLET_ADDRESS")
+                getSecret(character, "AKASH_WALLET_ADDRESS")
                 ? akashPlugin
                 : null,
             getSecret(character, "QUAI_PRIVATE_KEY")
